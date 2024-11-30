@@ -20,6 +20,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+
 // Google Sign-In function
 function googleSignIn() {
   const provider = new GoogleAuthProvider();

@@ -10,96 +10,29 @@
   margin-left: -50px;
 }
 
+.resource-container {
+  padding: 5px 40px 5px 0px;
+  width: 190px;
+  overflow: hidden;  // Ensures the content doesn't overflow the container
 
-.button-cover,
-.knobs,
-.layer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  .resource-item {
+    flex: 1 1 calc(33% - 20px);  // Each item takes up 1/3rd of the space
+    min-width: 250px;             // Prevents items from being too small
+    box-sizing: border-box;      // Ensures padding and borders don't affect the size
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    text-align: center;
+
+    
+  }
+
 }
 
-.button {
-  position: relative;
-  width: 74px;
-  height: 35px;
-  overflow: hidden;
-}
-
-.button.r,
-.button.r .layer {
-  border-radius: 100px;
-}
-
-.button.b2 {
-  border-radius: 2px;
-}
-
-.checkbox {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 3;
-}
-
-.knobs {
-  z-index: 2;
-}
-
-.layer {
-  width: 100%;
-  background-color: #ebf7fc;
-  transition: 0.3s ease all;
-  z-index: 1;
-}
-/* Button 2 */
-#button-2 .knobs:before,
-#button-2 .knobs:after {
-  content: "Private";
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 26px;
-  height: 26px;
-  color: #fff;
-  font-size: 10px;
-  font-weight: bold;
-  text-align: center;
-  line-height: 1;
-  padding: 9px 4px;
-  background-color: #03a9f4;
-  border-radius: 50%;
-  transition: 0.3s ease all;
-}
-
-#button-2 .knobs:before {
-  content: "Private";
-}
-
-#button-2 .knobs:after {
-  content: "Public";
-}
-
-#button-2 .knobs:after {
-  right: -28px;
-  left: auto;
-  background-color: #f44336;
-}
-
-#button-2 .checkbox:checked + .knobs:before {
-  left: -28px;
-}
-
-#button-2 .checkbox:checked + .knobs:after {
-  right: 4px;
-}
-
-#button-2 .checkbox:checked ~ .layer {
-  background-color: #fcebeb;
+#output {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: start;
 }
