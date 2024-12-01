@@ -11,9 +11,11 @@
 }
 
 .resource-container {
-  padding: 5px 40px 5px 0px;
-  width: 190px;
-  overflow: hidden;  // Ensures the content doesn't overflow the container
+  overflow: hidden;
+  padding: 5px 15px 5px 0px;
+  overflow: hidden;
+  display: flex;
+  width: 46%;
 
   .resource-item {
     flex: 1 1 calc(33% - 20px);  // Each item takes up 1/3rd of the space
@@ -24,10 +26,12 @@
     border-radius: 5px;
     background-color: #fff;
     text-align: center;
-
-    
   }
 
+}
+.description{
+  font-size: 14px;
+  opacity: 0.5;
 }
 
 #output {
@@ -35,4 +39,23 @@
   flex-wrap: wrap;
   gap: 20px;
   justify-content: start;
+}
+
+.category{
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background-color: #f0f0f0;
+  color: #6c6c6c;
+}
+
+.resource-link{
+  font-size: 16px;
+}
+.favicon{
+  margin: 0px 20px 0px 0px;
+  width: 30px;
+  height: 30px;
+  margin-top: 25px;
+  object-fit: contain;
 }
