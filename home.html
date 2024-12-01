@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./style/style.css">
   </head>
-  <body class="bg-gray-100 px-6">
+  <body class="bg-gray-100 px-2">
   <!-- Navigation Bar -->
      <!-- Welcome Message and Logout Button -->
     <header class="text-gray-600 body-font">
@@ -36,30 +36,31 @@
           <input
             type="text" id="resourceName"
             placeholder="Name of the resource"
-            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500" required
           />
           <input
             type="url" id="resourceUrl"
             placeholder="Website URL"
-            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500" required
           />
           <select id="resourceCategory"
-            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500" required
           >
             <option disabled selected>Select Category</option>
             <option value="design">Design</option>
-            <option value="development">Development</option>
+            <option value="dev">Development</option>
             <option value="ai-tools">AI Tools</option>
             <option value="marketing">Marketing</option>
-            <option value="content-creation">Content Creation</option>
+            <option value="content">Content</option>
             <option value="productivity">Productivity</option>
+            <option value="other">Other</option>
             <!-- Add categories as options here -->
           </select>
           <button
             type="submit"
             class="w-full py-2 bg-black text-white rounded-md hover:bg-gray-800"
           >
-            Save
+            Save Resource
           </button>
         </form>
       </div>
@@ -70,21 +71,19 @@
         
           <!--Template Card-->
           <div class="flex items-center">
-            <div id="output" class="flex items-center">
-              <!-- Template for a single resource -->
+            <!-- Template for displaying each resource -->
               <template id="resource-template">
-                <div class="resource-container">
-                  <!-- <div class="resource-logo">
-                    <img src="" alt="Resource Favicon" class="favicon-img" />
-                  </div> -->
-                  <p class="inline-block py-1 px-2 rounded bg-indigo-50 text-indigo-500 text-xs font-medium uppercase category"></p>
-                  <h3 class="font-semibold mt-1"></h3>
-                  <p class="text-gray-500 text-sm">
-                    <a href="#" target="_blank">Visit Resource</a>
-                  </p>
+                <div class="resource-item resource-container">
+                  <p class="inline-block py-1 px-2 rounded bg-indigo-50 text-indigo-500 text-xs font-medium uppercase category"></p>  <!-- This will hold the category -->
+                  <h3>
+                    <a href="#" class="font-semibold mt-1 resource-link" target="_blank"></a>  <!-- This will hold the resource link -->
+                  </h3> 
                 </div>
               </template>
-            </div>
+
+              <!-- Output container where resources will be displayed -->
+              <div id="output"></div>
+
           </div>
 
           
@@ -93,88 +92,115 @@
       <!-- Custom Script -->
        <script type="module">
         // Import required Firebase modules
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-          apiKey: "AIzaSyDjb5lgiv9TJhZc7OpfWnEtbmWQiFUTR-E",
-          authDomain: "reesave-6b96c.firebaseapp.com",
-          projectId: "reesave-6b96c",
-          storageBucket: "reesave-6b96c.firebasestorage.app",
-          messagingSenderId: "274158477072",
-          appId: "1:274158477072:web:5cdfc7ca54b3f8f39acf95"
-        };
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDjb5lgiv9TJhZc7OpfWnEtbmWQiFUTR-E",
+  authDomain: "reesave-6b96c.firebaseapp.com",
+  projectId: "reesave-6b96c",
+  storageBucket: "reesave-6b96c.firebasestorage.app",
+  messagingSenderId: "274158477072",
+  appId: "1:274158477072:web:5cdfc7ca54b3f8f39acf95",
+};
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth();
 
-        // Example usage of `ref` instead of `child`
-        const form = document.getElementById("resourceForm");
+// **Save Resource Form Handling**
+const form = document.getElementById("resourceForm");
 
-        form.addEventListener("submit", function (event) {
-          event.preventDefault();
+form.addEventListener("submit", function (event) {
+  event.preventDefault();
 
-          const resourceName = document.getElementById("resourceName").value;
-          const resourceUrl = document.getElementById("resourceUrl").value;
-          const resourceCategory = document.getElementById("resourceCategory").value;
+  const resourceName = document.getElementById("resourceName").value;
+  const resourceUrl = document.getElementById("resourceUrl").value;
+  const resourceCategory = document.getElementById("resourceCategory").value;
 
-          // Save data to Firebase Realtime Database
-          set(ref(db, 'resources/' + resourceName), {
-            resourceName: resourceName,
-            resourceUrl: resourceUrl,
-            resourceCategory: resourceCategory
-          })
-            .then(() => {
-              alert("Resource saved successfully!");
-            })
-            .catch((error) => {
-              console.error("Error saving resource:", error);
-            });
+  // Check if a user is signed in
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const userUID = user.uid; // Logged-in user's unique UID
+
+      // Reference for user's specific resources
+      const userRef = ref(db, `users/${userUID}`);
+      const newResourceRef = push(userRef); // Generate unique key for new resource
+
+      // Save resource to Firebase
+      set(newResourceRef, {
+        resourceName,
+        resourceUrl,
+        resourceCategory,
+      })
+        .then(() => {
+          alert("Resource saved successfully!");
+          form.reset(); // Clear form inputs
+        })
+        .catch((error) => {
+          console.error("Error saving resource:", error);
+        });
+    } else {
+      alert("You need to sign in to save resources.");
+    }
+  });
+});
+
+// **Show User-Specific Resources**
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    const userUID = user.uid; // Logged-in user's unique UID
+    const userResourcesRef = ref(db, `users/${userUID}`); // Reference to user's resources
+
+    onValue(userResourcesRef, (snapshot) => {
+      const data = snapshot.val();
+      const outputDiv = document.getElementById("output");
+      const template = document.getElementById("resource-template");
+
+      if (data) {
+        outputDiv.innerHTML = ""; // Clear previous resources
+
+        // Loop through the resources and render them
+        Object.keys(data).forEach((key) => {
+          const resource = data[key];
+
+          // Clone the template for each resource
+          const clone = template.content.cloneNode(true);
+
+          // Safely populate the cloned template with resource data
+          const resourceNameElement = clone.querySelector("h3 a");
+          if (resourceNameElement) {
+            resourceNameElement.textContent = resource.resourceName; // Set resource name
+            resourceNameElement.href = resource.resourceUrl; // Set resource URL
+          } else {
+            console.error("Resource name element not found in the template!");
+          }
+
+          const categoryElement = clone.querySelector(".category");
+          if (categoryElement) {
+            categoryElement.textContent = resource.resourceCategory; // Set category
+          } else {
+            console.error("Category element not found in the template!");
+          }
+
+          // Append the cloned template to the output div
+          outputDiv.appendChild(clone);
         });
 
-        // Showing Data
-        // Reference to the data in Firebase
-          const dataRef = ref(db, 'resources/'); // Update 'resources/' with your database path
-
-onValue(dataRef, (snapshot) => {
-  const data = snapshot.val();
-  const outputDiv = document.getElementById("output");
-  const template = document.getElementById("resource-template");
-
-  if (data) {
-    outputDiv.innerHTML = ""; // Clear previous content
-
-    Object.keys(data).forEach((key) => {
-      const resource = data[key];
-      
-      // Clone the template
-      const clone = template.content.cloneNode(true);
-      
-      // Populate the cloned template
-      clone.querySelector("h3").textContent = resource.resourceName;
-      clone.querySelector("a").href = resource.resourceUrl;
-      clone.querySelector("a").textContent = "Visit Resource";
-      clone.querySelector(".category").textContent = resource.resourceCategory;
-
-      // Fetch and set the favicon with error handling
-      // const faviconImg = clone.querySelector(".favicon-img");
-      // const faviconUrl = resource.resourceUrl + "/favicon.ico"; // Default favicon location
-      // faviconImg.src = faviconUrl;
-
-      // Check if favicon exists, otherwise use default
-      // faviconImg.onerror = () => {
-      //   faviconImg.src = "./res/favicon.png"; // Provide the path to your default favicon
-      // };
-
-      // Append the populated template to the output div
-      outputDiv.appendChild(clone);
+      } else {
+        outputDiv.innerHTML = "<p>No resources found. Add your first resource!</p>";
+      }
     });
   } else {
-    outputDiv.innerHTML = "<p>No data available.</p>";
+    document.getElementById("output").innerHTML = "<p>Please sign in to view your resources.</p>";
   }
 });
+
+
+
 
        </script>
   <script src="./home.js"></script>
