@@ -6,11 +6,12 @@
     <title>Resource Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./style/style.css">
+    <link rel="icon" type="image/x-icon" href="./res/Favicon.png">
   </head>
-  <body class="bg-gray-100 px-2">
+  <body class="bg-gray-100 px-2 container mx-auto">
   <!-- Navigation Bar -->
      <!-- Welcome Message and Logout Button -->
-    <header class="text-gray-600 body-font">
+    <header class="mt-4 mb-4 text-gray-600 body-font">
       <div class="container mx-auto flex flex-wrap p-2 flex-col md:flex-row items-center" bis_skin_checked="1">
         <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
           
@@ -18,7 +19,7 @@
 
         </a>
         <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center"></nav>
-        <button id="logoutButton" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">Logout</button>
+        <button id="logoutButton" class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base">Logout</button>
       </div>
     </header>
     
@@ -43,13 +44,17 @@
             placeholder="Website URL"
             class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500" required
           />
+          <!-- <textarea class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500" id="resourceDescription" placeholder="Description" required></textarea> -->
+          <textarea class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500" id="resourceDescription" placeholder="Description (Max 8 words)" required></textarea>
+          <small id="wordCountError" style="color: red; display: none;">Description must not exceed 8 words.</small>
+
           <select id="resourceCategory"
             class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500" required
           >
             <option disabled selected>Select Category</option>
             <option value="design">Design</option>
             <option value="dev">Development</option>
-            <option value="ai-tools">AI Tools</option>
+            <option value="ai-tool">AI Tool</option>
             <option value="marketing">Marketing</option>
             <option value="content">Content</option>
             <option value="productivity">Productivity</option>
@@ -65,19 +70,23 @@
         </form>
       </div>
       <!-- Resources List -->
-      <div class="bg-white p-6 rounded-lg shadow-md col-span-1 md:col-span-2">
-        <h2 class="text-xl font-semibold mb-4">Resources</h2>
-        
-        
+      <div class="bg-white p-4 rounded-lg shadow-md col-span-1 md:col-span-2">
+        <!-- <h2 class="text-xl font-semibold mb-4">Resources</h2> -->
           <!--Template Card-->
           <div class="flex items-center">
             <!-- Template for displaying each resource -->
               <template id="resource-template">
                 <div class="resource-item resource-container">
-                  <p class="inline-block py-1 px-2 rounded bg-indigo-50 text-indigo-500 text-xs font-medium uppercase category"></p>  <!-- This will hold the category -->
-                  <h3>
-                    <a href="#" class="font-semibold mt-1 resource-link" target="_blank"></a>  <!-- This will hold the resource link -->
-                  </h3> 
+                  <div class="resourceBox">
+                    <img class="favicon"/>
+                  </div>
+                    <div class="resourceDetails">
+                      <p class="inline-block py-1 px-2 rounded uppercase category"></p>  <!-- This will hold the category -->
+                      <h3>
+                        <a href="#" class="font-semibold mt-1 resource-link" target="_blank"></a>  <!-- This will hold the resource link -->
+                      </h3> 
+                      <p class="description"></p>
+                    </div>
                 </div>
               </template>
 
@@ -120,6 +129,7 @@ form.addEventListener("submit", function (event) {
   const resourceName = document.getElementById("resourceName").value;
   const resourceUrl = document.getElementById("resourceUrl").value;
   const resourceCategory = document.getElementById("resourceCategory").value;
+  const resourceDescription = document.getElementById("resourceDescription").value; // Get description value
 
   // Check if a user is signed in
   onAuthStateChanged(auth, (user) => {
@@ -135,6 +145,7 @@ form.addEventListener("submit", function (event) {
         resourceName,
         resourceUrl,
         resourceCategory,
+        resourceDescription,
       })
         .then(() => {
           alert("Resource saved successfully!");
@@ -175,16 +186,30 @@ onAuthStateChanged(auth, (user) => {
           if (resourceNameElement) {
             resourceNameElement.textContent = resource.resourceName; // Set resource name
             resourceNameElement.href = resource.resourceUrl; // Set resource URL
+            
           } else {
-            console.error("Resource name element not found in the template!");
+            console.error("Resource element not found");
           }
 
           const categoryElement = clone.querySelector(".category");
           if (categoryElement) {
             categoryElement.textContent = resource.resourceCategory; // Set category
           } else {
-            console.error("Category element not found in the template!");
+            console.error("Category not found");
           }
+
+          const descriptionElement = clone.querySelector(".description");
+          descriptionElement.textContent = `${resource.resourceDescription}`; // Add description
+
+          // Generate favicon URL
+          const faviconElement = clone.querySelector(".favicon");
+          const url = new URL(resource.resourceUrl);
+          const faviconURL = `${url.origin}/favicon.ico`;
+          faviconElement.src = faviconURL;
+          
+          faviconElement.onerror = () => {
+            faviconElement.src = "./res/favicon.svg"; // Path to a default favicon
+            };
 
           // Append the cloned template to the output div
           outputDiv.appendChild(clone);
@@ -199,6 +224,23 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+const descriptionField = document.getElementById("resourceDescription");
+const wordCountError = document.getElementById("wordCountError");
+
+// Add input event listener to the textarea
+descriptionField.addEventListener("input", () => {
+  const description = descriptionField.value.trim();
+  const wordCount = description.split(/\s+/).length;
+
+  // If word count exceeds 8, truncate the input and show the error
+  if (wordCount > 8) {
+    const truncatedDescription = description.split(/\s+/).slice(0, 8).join(" ");
+    descriptionField.value = truncatedDescription; // Set only the first 8 words
+    wordCountError.style.display = "block"; // Show error message
+  } else {
+    wordCountError.style.display = "none"; // Hide error message
+  }
+});
 
 
 
