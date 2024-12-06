@@ -27,7 +27,7 @@
   </div>
     <div class="container mx-auto grid gap-6 md:grid-cols-3 lg:grid-cols-3">
       <!-- Add Resource Form -->
-      <div class="bg-white p-6 rounded-lg shadow-md col-span-1">
+      <div class=" bg-white p-6 rounded-lg shadow-md col-span-1">
         <h2 class="text-xl font-semibold mb-4">Add Resource</h2>
         <p class="text-gray-600 text-sm mb-6">
           Add your resource by adding link to it. The basic information will
@@ -70,24 +70,19 @@
         </form>
       </div>
       <!-- Resources List -->
-      <div class="bg-white p-4 rounded-lg shadow-md col-span-1 md:col-span-2">
+      <div class="bg-white rounded-lg shadow-md col-span-1 md:col-span-2">
+
         <!-- <h2 class="text-xl font-semibold mb-4">Resources</h2> -->
           <!--Template Card-->
           <div class="flex items-center">
             <!-- Template for displaying each resource -->
-              <template id="resource-template">
-                <div class="resource-item resource-container">
-                  <div class="resourceBox">
+              <template id="resource-template" class="flex flex-col justify-between">
+                  <div class="resource-container w-full md:w-1/2 lg:w-1/3 px-4 py-4">
                     <img class="favicon"/>
-                  </div>
-                    <div class="resourceDetails">
-                      <p class="inline-block py-1 px-2 rounded uppercase category"></p>  <!-- This will hold the category -->
-                      <h3>
-                        <a href="#" class="font-semibold mt-1 resource-link" target="_blank"></a>  <!-- This will hold the resource link -->
-                      </h3> 
+                      <h3 class="font-semibold"><a href="#" class="resource-link" target="_blank"></a></h3> 
                       <p class="description"></p>
-                    </div>
-                </div>
+                      <p class="inline-block rounded uppercase category mt-2 px-2 py-1"></p>  <!-- This will hold the category -->
+                  </div>
               </template>
 
               <!-- Output container where resources will be displayed -->
@@ -182,6 +177,7 @@ onAuthStateChanged(auth, (user) => {
           const clone = template.content.cloneNode(true);
 
           // Safely populate the cloned template with resource data
+          
           const resourceNameElement = clone.querySelector("h3 a");
           if (resourceNameElement) {
             resourceNameElement.textContent = resource.resourceName; // Set resource name

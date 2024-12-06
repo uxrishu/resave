@@ -10,25 +10,6 @@
   margin-left: -50px;
 }
 
-.resource-container {
-  overflow: hidden;
-  padding: 5px 15px 5px 0px;
-  overflow: hidden;
-  display: flex;
-  width: 46%;
-
-  .resource-item {
-    flex: 1 1 calc(33% - 20px);  // Each item takes up 1/3rd of the space
-    min-width: 250px;             // Prevents items from being too small
-    box-sizing: border-box;      // Ensures padding and borders don't affect the size
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    text-align: center;
-  }
-
-}
 .description{
   font-size: 14px;
   opacity: 0.5;
@@ -37,8 +18,8 @@
 #output {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  justify-content: start;
+  // gap: 20px;
+  // justify-content: start;
 }
 
 .category{
@@ -53,9 +34,8 @@
   font-size: 16px;
 }
 .favicon{
-  margin: 0px 20px 0px 0px;
-  width: 30px;
-  height: 30px;
-  margin-top: 25px;
+  margin: 0px 0px 5px 0px;
+  width: 35px;
+  height: 35px;
   object-fit: contain;
 }
