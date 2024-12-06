@@ -18,8 +18,7 @@
 #output {
   display: flex;
   flex-wrap: wrap;
-  // gap: 20px;
-  // justify-content: start;
+  justify-content: space-between;
 }
 
 .category{
@@ -38,4 +37,41 @@
   width: 35px;
   height: 35px;
   object-fit: contain;
+}
+
+.desc_del {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.resource-container{
+  width: 32%;
+  border: 1px solid #e5e5e5;
+  margin: 5px;
+  border-radius: 12px;
+}
+
+@media screen and (max-width: 1280px) {
+  .resource-container{
+    width: 316px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .resource-container{
+    width: 230px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .resource-container{
+    width: 47%;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  .resource-container{
+    width: 100%;
+  }
 }

@@ -12,7 +12,7 @@
   <!-- Navigation Bar -->
      <!-- Welcome Message and Logout Button -->
     <header class="mt-4 mb-4 text-gray-600 body-font">
-      <div class="container mx-auto flex flex-wrap p-2 flex-col md:flex-row items-center" bis_skin_checked="1">
+      <div class="container mx-auto flex text-center flex-wrap p-2 flex-col md:flex-row items-center" bis_skin_checked="1">
         <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
           
           <h3 class="text-2xl font-semibold"><span id="userName"></span>'s Workspace</h3>
@@ -77,11 +77,20 @@
           <div class="flex items-center">
             <!-- Template for displaying each resource -->
               <template id="resource-template" class="flex flex-col justify-between">
-                  <div class="resource-container w-full md:w-1/2 lg:w-1/3 px-4 py-4">
+                  <div class="resource-container p-2">
                     <img class="favicon"/>
                       <h3 class="font-semibold"><a href="#" class="resource-link" target="_blank"></a></h3> 
                       <p class="description"></p>
-                      <p class="inline-block rounded uppercase category mt-2 px-2 py-1"></p>  <!-- This will hold the category -->
+                      <div class="desc_del mt-2">
+                        <!--Category-->
+                        <p class="inline-block rounded uppercase category mt-2 px-2 py-1"></p>  <!-- This will hold the category -->
+                        <!-- Delete Button Function -->
+                        <div class="relative inline-block text-left mt-2">
+                          <button class="delete-btn menu-button">
+                            <img src="./res/trash.svg" alt="">
+                          </button>
+                        </div>
+                      </div>
                   </div>
               </template>
 
@@ -161,6 +170,26 @@ onAuthStateChanged(auth, (user) => {
     const userUID = user.uid; // Logged-in user's unique UID
     const userResourcesRef = ref(db, `users/${userUID}`); // Reference to user's resources
 
+    // Attach event listeners to the delete button
+function attachDeleteListener(resourceKey) {
+  const outputDiv = document.getElementById("output");
+
+  // Find the last added resource element
+  const resourceElement = outputDiv.lastElementChild;
+
+  // Delete Button Logic
+  const deleteBtn = resourceElement.querySelector(".delete-btn");
+  deleteBtn.addEventListener("click", () => {
+    const confirmDelete = confirm("Are you sure you want to delete this resource?");
+    if (confirmDelete) {
+      const resourceRef = ref(db, `users/${user.uid}/${resourceKey}`);
+      set(resourceRef, null)
+        .then(() => alert("Resource deleted successfully!"))
+        .catch((error) => console.error("Error deleting resource:", error));
+    }
+  });
+}
+
     onValue(userResourcesRef, (snapshot) => {
       const data = snapshot.val();
       const outputDiv = document.getElementById("output");
@@ -209,6 +238,9 @@ onAuthStateChanged(auth, (user) => {
 
           // Append the cloned template to the output div
           outputDiv.appendChild(clone);
+
+          // Attach delete event listener for this resource
+          attachDeleteListener(key);
         });
 
       } else {
@@ -237,8 +269,6 @@ descriptionField.addEventListener("input", () => {
     wordCountError.style.display = "none"; // Hide error message
   }
 });
-
-
 
        </script>
   <script src="./home.js"></script>
