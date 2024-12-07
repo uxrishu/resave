@@ -70,14 +70,12 @@
         </form>
       </div>
       <!-- Resources List -->
-      <div class="bg-white rounded-lg shadow-md col-span-1 md:col-span-2">
-
+      <div class="bg-white rounded-lg shadow-md col-span-1 md:col-span-2 ">
         <!-- <h2 class="text-xl font-semibold mb-4">Resources</h2> -->
           <!--Template Card-->
-          <div class="flex items-center">
             <!-- Template for displaying each resource -->
-              <template id="resource-template" class="flex flex-col justify-between">
-                  <div class="resource-container p-2">
+              <template id="resource-template">
+                  <div class="card p-2">
                     <img class="favicon"/>
                       <h3 class="font-semibold"><a href="#" class="resource-link" target="_blank"></a></h3> 
                       <p class="description"></p>
@@ -95,11 +93,7 @@
               </template>
 
               <!-- Output container where resources will be displayed -->
-              <div id="output"></div>
-
-          </div>
-
-          
+              <div id="output" class="res-container"></div> 
       </div>
     </div>
       <!-- Custom Script -->
