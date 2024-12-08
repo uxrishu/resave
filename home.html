@@ -8,18 +8,18 @@
     <link rel="stylesheet" href="./style/style.css">
     <link rel="icon" type="image/x-icon" href="./res/Favicon.png">
   </head>
-  <body class="bg-gray-100 px-2 container mx-auto">
+  <body class="px-2 container mx-auto">
   <!-- Navigation Bar -->
      <!-- Welcome Message and Logout Button -->
-    <header class="mt-4 mb-4 text-gray-600 body-font">
+    <header class="mt-4 mb-4 nav">
       <div class="container mx-auto flex text-center flex-wrap p-2 flex-col md:flex-row items-center" bis_skin_checked="1">
-        <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+        <a class="flex items-center mb-4 md:mb-0">
           
-          <h3 class="text-2xl font-semibold"><span id="userName"></span>'s Workspace</h3>
+          <h3 class="text-2xl"><span id="userName"></span> Workspace</h3>
 
         </a>
         <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center"></nav>
-        <button id="logoutButton" class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base">Logout</button>
+        <button id="logoutButton" class="inline-flex items-center py-1 px-3 text-base opacity-50">Logout</button>
       </div>
     </header>
     
@@ -27,9 +27,9 @@
   </div>
     <div class="container mx-auto grid gap-6 md:grid-cols-3 lg:grid-cols-3">
       <!-- Add Resource Form -->
-      <div class=" bg-white p-6 rounded-lg shadow-md col-span-1">
-        <h2 class="text-xl font-semibold mb-4">Add Resource</h2>
-        <p class="text-gray-600 text-sm mb-6">
+      <div class="mainForm p-6 rounded-lg col-span-1">
+        <h2 class="text-xl font-semibold">Add Resource</h2>
+        <p class="text-sm mb-6 mt-1 opacity-50">
           Add your resource by adding link to it. The basic information will
           automatically get fetched.
         </p>
@@ -37,23 +37,23 @@
           <input
             type="text" id="resourceName"
             placeholder="Name of the resource"
-            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500" required
+            class="inputField w-full px-4 py-3 rounded-md" required
           />
           <input
             type="url" id="resourceUrl"
             placeholder="Website URL"
-            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500" required
+            class="inputField w-full px-4 py-3 rounded-md" required
           />
-          <!-- <textarea class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500" id="resourceDescription" placeholder="Description" required></textarea> -->
-          <textarea class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500" id="resourceDescription" placeholder="Description (Max 8 words)" required></textarea>
-          <small id="wordCountError" style="color: red; display: none;">Description must not exceed 8 words.</small>
+          <textarea class="inputField w-full px-4 py-3 rounded-md" id="resourceDescription" placeholder="Description (Max 8 words)" required></textarea>
+          <small id="wordCountError" style="color: rgb(209, 42, 42); display: none;">Description must not exceed 8 words.</small>
 
           <select id="resourceCategory"
-            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-indigo-500" required
+            class="inputField w-full px-4 py-3 rounded-md" required
           >
             <option disabled selected>Select Category</option>
             <option value="design">Design</option>
             <option value="dev">Development</option>
+            <option value="inspiration">Inspiration</option>
             <option value="ai-tool">AI Tool</option>
             <option value="marketing">Marketing</option>
             <option value="content">Content</option>
@@ -63,25 +63,25 @@
           </select>
           <button
             type="submit"
-            class="w-full py-2 bg-black text-white rounded-md hover:bg-gray-800"
+            class="w-full py-4 rounded-md btn2 uppercase"
           >
             Save Resource
           </button>
         </form>
       </div>
       <!-- Resources List -->
-      <div class="bg-white rounded-lg shadow-md col-span-1 md:col-span-2 ">
+      <div class="rightBox col-span-1 md:col-span-2 ">
         <!-- <h2 class="text-xl font-semibold mb-4">Resources</h2> -->
           <!--Template Card-->
             <!-- Template for displaying each resource -->
               <template id="resource-template">
-                  <div class="card p-2">
+                  <div class="card">
                     <img class="favicon"/>
-                      <h3 class="font-semibold"><a href="#" class="resource-link" target="_blank"></a></h3> 
+                      <h3 class="title font-semibold"><a href="#" class="resource-link" target="_blank"></a></h3> 
                       <p class="description"></p>
                       <div class="desc_del mt-2">
                         <!--Category-->
-                        <p class="inline-block rounded uppercase category mt-2 px-2 py-1"></p>  <!-- This will hold the category -->
+                        <p class="inline-block rounded uppercase category mt-2 px-2 py-2"></p>  <!-- This will hold the category -->
                         <!-- Delete Button Function -->
                         <div class="relative inline-block text-left mt-2">
                           <button class="delete-btn menu-button">
@@ -178,7 +178,7 @@ function attachDeleteListener(resourceKey) {
     if (confirmDelete) {
       const resourceRef = ref(db, `users/${user.uid}/${resourceKey}`);
       set(resourceRef, null)
-        .then(() => alert("Resource deleted successfully!"))
+        // .then(() => alert("Resource deleted successfully!"))
         .catch((error) => console.error("Error deleting resource:", error));
     }
   });
@@ -238,11 +238,11 @@ function attachDeleteListener(resourceKey) {
         });
 
       } else {
-        outputDiv.innerHTML = "<p>No resources found. Add your first resource!</p>";
+        outputDiv.innerHTML = '<p class="text-white">No resources found. Add your first resource!</p>';
       }
     });
   } else {
-    document.getElementById("output").innerHTML = "<p>Please sign in to view your resources.</p>";
+    document.getElementById("output").innerHTML = '<p class="text-white">Please sign in to view your resources.</p>';
   }
 });
 
